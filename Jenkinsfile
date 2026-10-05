@@ -8,7 +8,7 @@ pipeline {
     }
 
     environment {
-        IMAGE_REPO = 'goguma1/demo-app'
+        IMAGE_REPO = 'ghcr.io/poatan2/demo-app'
     }
 
     stages {
@@ -47,14 +47,9 @@ pipeline {
                 }
             }
             steps {
-                withCredentials([usernamePassword(
-                        credentialsId: 'dockerhub-access-token',
-                        usernameVariable: 'DOCKER_USER',
-                        passwordVariable: 'DOCKER_PASS')]) {
-                    sh '''
-                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker push ${IMAGE_REPO}:${IMAGE_TAG}
-                    '''
+                withCredentials([usernamePassword(credentialsId: 'ghcr-token', usernameVariable: 'GHCR_USER', passwordVariable: 'GHCR_TOKEN')]) {
+                    sh 'echo $GHCR_TOKEN | docker login ghcr.io -u $GHCR_USER --password-stdin'
+                    sh 'docker push ${IMAGE_REPO}:${IMAGE_TAG}'
                 }
             }
         }
@@ -62,7 +57,7 @@ pipeline {
 
     post {
         always {
-            sh 'docker logout || true'
+            sh 'docker logout ghcr.io || true'
             sh 'docker rmi ${IMAGE_REPO}:${IMAGE_TAG} || true'
         }
         failure {
