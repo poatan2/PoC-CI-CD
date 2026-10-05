@@ -20,13 +20,13 @@ public class HelloControllerTest {
     void hello_기본값() throws Exception {
         mockMvc.perform(get("/hello"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Hello, world!"));
+                .andExpect(content().string("Hello, world!!!"));
     }
 
     @Test
     void hello_이름전달() throws Exception {
         mockMvc.perform(get("/hello").param("name", "CI"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Hello, CI!"));
+                .andExpect(content().string("Hello, CI!!!"));
     }
 }
